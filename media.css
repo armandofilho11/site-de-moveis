@@ -20,25 +20,20 @@
 
       }
 
-      /* Grid adaptável */
-.box-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* antes era 30rem */
-    gap: 1rem;
-    width: 100%;
-}
+      .home section {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 0 1rem;
+    }
 
-/* Box flexível */
-.menu .box-container .box {
-    text-align: center;
-    border: var(--border);
-    padding: 2rem; /* reduzi de 4rem para 2rem */
-    cursor: pointer;
-    background-color: var(--cor04);
-    max-width: 100%; /* nunca ultrapassa a tela */
-    word-wrap: break-word; /* evita textos grandes quebrarem layout */
-}
+    .container h3 {
+        font-size: 3rem;
+    }
 
+    .container p {
+        font-size: 1.4rem;
+    }
 
     .home section{
         display: flex;
@@ -103,9 +98,15 @@
     grid-template-columns: repeat(2, minmax(20rem,1fr) );
     justify-items: center;
     gap: 1rem;}
+    
+    .box-container{
+      grid-template-columns: 1fr;
+    }
 
   .menu .box-container .box{
-    width: 200px;
+    width: 90%;
+    max-width: 350px;
+    margin: 0 auto;
   }
 
  #btn-compra {
