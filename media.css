@@ -1,0 +1,102 @@
+
+
+@media screen and (max-width:789px) {
+
+    :root{
+
+    --cor01: #F9F9F6;
+    --cor02: #2C2C2C;   
+    --cor03: #BFA888;   
+    --cor04: #E8E4DD;  
+    --cor05: #8C7A6B;  
+    --border: 0.1rem solid #CFCFCF;
+    font-size: 10px;
+
+}
+
+    .home section{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 2rem;
+        margin-top: 30px;
+
+    }
+
+    .abount .row{
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        padding-top: 10px;
+        border-radius: 10px;
+    }
+
+    .about .row .content h3{
+        font-size: 2.4rem;
+
+    }
+
+    
+  .abount .row .content p {
+    font-size: 1.4rem;
+  }
+
+
+ 
+     .menu-toggle {
+    display: block;
+    padding-right: 10px;
+    height: 50px;
+    width: 50px;
+  }
+
+  .navegacao {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #2c2c2cbd;
+    color: var(--cor01);
+    flex-direction: column;
+    align-items: center;
+    display: none; 
+  }
+
+
+  .navegacao a {
+    margin: 1.5rem 0;
+    font-size: 2rem;
+  }
+
+  .navegacao.active {
+    display: flex;
+  }
+
+  .box-container{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(20rem,1fr) );
+    justify-items: center;
+    gap: 1rem;}
+
+  .menu .box-container .box{
+    width: 200px;
+  }
+
+ #btn-compra {
+    font-size: 13px;
+        text-align: center;
+        width: 129px;
+  }
+
+ #btn-compra :hover{
+    background-color: var(--cor03);
+    color: var(--cor01);
+    border: 1px solid black;
+  }
+
+
+  #box3{
+    grid-column: 1/-1;
+  }
+
+}

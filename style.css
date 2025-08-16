@@ -1,0 +1,274 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root{
+    --cor01: #F9F9F6;
+    --cor02: #2C2C2C;  
+    --cor03: #BFA888;   
+    --cor04: #E8E4DD;  
+    --cor05: #8C7A6B;  
+    --border: 0.1rem solid #CFCFCF;
+    font-size: 10px;
+}
+
+*{
+   padding: 0;
+   margin: 0;
+   outline: none;
+   text-decoration: none;
+   text-transform: capitalize;
+   box-sizing: border-box;
+   transition: 0.4s linear;
+   font-family: "Roboto", sans-serif;
+}
+
+body{
+    background-color: var(--cor01);
+}
+
+section{
+    padding: 48px 32px ;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.header{
+    background-color: var(--cor02);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    border-bottom: var(--border);
+}
+
+.header > section{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px ;
+    padding-bottom: 7px;
+}
+
+.navegacao a{
+    margin: 0 16px;
+    font-size: 1.8rem;
+    color: var(--cor03);
+}
+
+.navegacao a:hover{
+    color: var(--cor05);
+    border-bottom: var(--border);
+    padding-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.icon img{
+    margin: 1rem;
+    cursor: pointer;
+}
+
+.icon img:hover{
+    width: 40px;
+    height: 40px;
+}
+
+.menu-toggle {
+  display: none;
+  font-size: 3rem;
+  color: var(--cor03);
+  cursor: pointer;
+}
+
+.home{
+    background-image: url(3d-renderizacao-sala-de-jantar-e-cozinha-com-decoracao-de-luxo.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.home section{
+    display: flex;
+    align-items: center;
+    height: 100vh;
+}
+
+.btn{
+    background: var(--cor05);
+    color: var(--cor01);
+    padding: 1rem 3rem;
+    font-size: 1.7rem;
+    cursor: pointer;
+    margin-top: 1rem; 
+    display: inline-block; 
+    border-radius: 70px;  
+}
+
+.btn:hover{
+    background-color: var(--cor03);
+    color: var(--cor01);
+    border: none;
+}
+
+.btn1{
+    background: var(--cor03);
+    color: var(--cor01);
+    padding: 1rem 3rem;
+    font-size: 1.7rem;
+    cursor: pointer;
+    margin-top: 1rem; 
+    display: inline-block; 
+    border-radius: 70px;  
+}
+
+.btn1:hover{
+    background-color: var(--cor05);
+    color: var(--cor01);
+}
+
+.container{
+    max-width: 60rem;
+}
+
+.container h3{
+    color: #ffff;
+    font-size: 6rem;
+}
+
+.container p {
+    color: var(--cor01);
+    font-size: 2rem;
+    font-weight: 200;
+    line-height: 1.8;
+    padding: 1rem 0;
+}
+
+.title{
+    font-size: 5rem;
+    color: var(--cor02);
+    text-transform: uppercase;
+    margin-bottom: 4rem;
+    text-align: center;
+}
+
+.title span{
+    color: var(--cor03);
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.abount .row{
+    display: flex;
+    align-items: center;
+    background-color: var(--cor04);
+    gap: 1.5rem;
+}
+
+.abount .row .content{
+    padding: 2rem;
+}
+
+.abount .row .content h3{
+    font-size: 3rem;
+    color: var(--cor02);
+}
+
+.abount .row .content p{
+    font-size: 1.6rem;
+    color: var(--cor02);
+    padding: 1rem 0;
+}
+
+.box-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30rem,1fr) );
+    gap: 1rem;
+}
+
+.menu .box-container .box{
+    text-align: center;
+    border: var(--border);
+    padding: 4rem;
+    cursor: pointer;
+    background-color: var(--cor04);
+}
+
+.menu .box-container .box img{
+    height: 10rem;
+}
+
+.menu .box-container .box h3{
+    color: var(--cor02);
+    font-size: 2rem;
+    padding: 1rem 0;
+}
+
+.menu .box-container .box .preço{
+    color: var(--cor05);
+    font-size: 2.5rem;
+    padding: 0.4rem 0;
+}
+
+.menu .box-container .box span{
+    font-size: 1.5rem;
+    text-decoration: line-through;
+    font-weight: lighter;
+    color: var(--cor02);
+}
+
+.menu .box-container .box:hover{
+    background-color: var(--cor03);
+    color: var(--cor01);
+}
+
+.menu .box-container .box:hover>*{
+    color: var(--cor01);
+}
+
+.review .box-container .box{
+    border: var(--border);
+    text-align: center;
+    padding: 3rem 2rem;
+    background-color: var(--cor02);
+}
+
+.review .box-container .box p{
+    font-size: 1.5rem;
+    color: var(--cor01);
+    padding: 2rem 0;
+    line-height: 1.8;
+}
+
+.review .box-container .box h3{
+    font-size: 2rem;
+    color: var(--cor05);
+    padding-bottom: 5px;
+}
+
+.review .box-container .box img{
+    height: 5rem;
+    width: 5rem;
+    margin: 1rem 0;
+}
+
+.footer {
+    text-align: center;
+    background-color: var(--cor02);
+
+}
+
+.footer .share {
+    padding:  0;
+
+}
+
+.footer .share img{
+    margin: 1.3rem;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 1rem;
+    background-color: var(--cor03);
+}
+
+.footer .share img:hover{
+    background-color: var(--cor05);
+}
