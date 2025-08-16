@@ -1,18 +1,10 @@
 @media screen and (max-width:450px) {
-      .header > section {
-        flex-direction: column;
-        align-items: flex-start;
+  /* Para dispositivos com largura até 768px (tablets e mobiles grandes) */
+@media (max-width: 768px) {
+    .header > section {
+        flex-direction: row;
+        align-items: center;
         padding: 10px 1rem;
-    }
-
-    .navegacao a {
-        margin: 8px 0;
-        font-size: 1.4rem;
-    }
-
-    /* Menu toggle para mobile */
-    .menu-toggle {
-        display: block;
     }
 
     .navegacao {
@@ -21,11 +13,10 @@
         width: 100%;
     }
 
-    .navegacao.active {
-        display: flex;
+    .menu-toggle {
+        display: block;
     }
 
-    /* Home / Banner */
     .home section {
         flex-direction: column;
         justify-content: center;
@@ -47,22 +38,17 @@
         margin-top: 0.8rem;
     }
 
-    /* Boxes do menu e review */
     .menu .box-container .box,
     .review .box-container .box {
         padding: 2rem;
     }
 
-    .menu .box-container .box img {
-        height: 8rem;
-    }
-
+    .menu .box-container .box img,
     .review .box-container .box img {
-        height: 4rem;
-        width: 4rem;
+        height: 6-8rem;
+        width: auto;
     }
 
-    /* Ajuste títulos */
     .title {
         font-size: 3rem;
         margin-bottom: 2rem;
@@ -71,6 +57,15 @@
     .title span {
         font-size: 3rem;
     }
+}
+
+/* Para telas muito pequenas (ex: 375px width) */
+@media (max-width: 375px) {
+    .navegacao a {
+        font-size: 1.2rem;
+        margin: 6px 0;
+    }
+}
 }
 
 
