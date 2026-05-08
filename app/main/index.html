@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MóveisCasa — Melhor Loja de Móveis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --cream: #f5f0e8;
+            --brown: #5c3d2e;
+            --warm: #c9a87c;
+            --dark: #1a1209;
+            --accent: #d4622a;
+        }
+        * { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--dark); }
+        h1, h2, h3, .playfair { font-family: 'Playfair Display', serif; }
+
+        header { background: rgba(245,240,232,0.92); backdrop-filter: blur(12px); }
+
+        .hero-bg {
+            background: linear-gradient(135deg, #1a1209 0%, #3b2412 50%, #5c3d2e 100%);
+            min-height: 92vh;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 70% 50%, rgba(201,168,124,0.18) 0%, transparent 70%);
+        }
+        .grain {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 2px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        .btn-primary:hover { background: #b5511f; transform: translateY(-2px); }
+
+        .btn-outline {
+            background-color: var(--warm);
+            
+            color: var(--dark);
+            padding: 12px 28px;
+            border-radius: 2px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        .btn-outline:hover { background: var(--brown); color: var(--cream); }
+
+        .product-card {
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.25,0.8,0.25,1);
+            box-shadow: 0 2px 12px rgba(26,18,9,0.06);
+        }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(26,18,9,0.14); }
+        .product-card img { width: 100%; height: 220px; object-fit: cover; background: #f0e8dc; }
+
+        .review-card {
+            background: white;
+            border-radius: 4px;
+            padding: 2rem;
+            box-shadow: 0 2px 16px rgba(26,18,9,0.06);
+            transition: transform 0.3s;
+        }
+        .review-card:hover { transform: translateY(-4px); }
+
+        .nav-link {
+            position: relative;
+            color: var(--dark);
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px; left: 0;
+            width: 0; height: 1.5px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        .nav-link:hover { color: var(--accent); }
+        .nav-link:hover::after { width: 100%; }
+
+        .section-tag {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--warm);
+            font-weight: 500;
+        }
+
+        .cart-panel {
+            position: fixed; top: 0; right: -420px;
+            width: 420px; height: 100vh;
+            background: white;
+            box-shadow: -8px 0 40px rgba(26,18,9,0.14);
+            z-index: 1000;
+            transition: right 0.4s cubic-bezier(0.25,0.8,0.25,1);
+            overflow-y: auto;
+        }
+        .cart-panel.open { right: 0; }
+        .cart-overlay {
+            position: fixed; inset: 0;
+            background: rgba(26,18,9,0.5);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(2px);
+        }
+        .cart-overlay.open { display: block; }
+
+        .mobile-menu {
+            display: none;
+            position: fixed; top: 72px; left: 0; right: 0;
+            background: rgba(245,240,232,0.98);
+            backdrop-filter: blur(16px);
+            z-index: 998;
+            border-bottom: 1px solid rgba(201,168,124,0.3);
+        }
+        .mobile-menu.open { display: block; }
+
+        .toast {
+            position: fixed; bottom: 28px; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--brown);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 3px;
+            font-size: 0.88rem;
+            font-family: 'DM Sans', sans-serif;
+            z-index: 2000;
+            transition: transform 0.4s cubic-bezier(0.25,0.8,0.25,1);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.7s ease both; }
+        .fade-up-2 { animation: fadeUp 0.7s 0.15s ease both; }
+        .fade-up-3 { animation: fadeUp 0.7s 0.3s ease both; }
+
+        .star-icon { color: #d4622a; font-size: 1rem; }
+
+        .divider-ornament {
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .divider-ornament::before, .divider-ornament::after {
+            content: ''; flex: 1;
+            height: 1px; background: rgba(201,168,124,0.4);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--cream); }
+        ::-webkit-scrollbar-thumb { background: var(--warm); border-radius: 3px; }
+
+        @media (max-width: 768px) {
+            .hero-bg { min-height: 100svh; }
+        }
+
+        .qty-btn {
+            width: 28px; height: 28px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; line-height: 1;
+            color: #6b7280; cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+        .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .cart-item-img {
+            width: 52px; height: 52px;
+            object-fit: cover; border-radius: 4px;
+            background: #f0e8dc;
+        }
+
+        .search-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(26,18,9,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 900;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 100px;
+        }
+        .search-overlay.open { display: flex; }
+        .search-box {
+            background: white;
+            border-radius: 8px;
+            width: 100%; max-width: 560px;
+            box-shadow: 0 24px 64px rgba(26,18,9,0.25);
+            overflow: hidden;
+        }
+        .search-result-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .search-result-item:hover { background: #f7f2ea; }
+
+        @keyframes cartBounce {
+            0%,100% { transform: scale(1); }
+            40% { transform: scale(1.35); }
+            70% { transform: scale(0.9); }
+        }
+        .badge-bounce { animation: cartBounce 0.45s ease; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .cart-item-anim { animation: slideIn 0.3s ease both; }
+
+        .progress-bar {
+            height: 4px; background: #f0e8dc; border-radius: 2px;
+            overflow: hidden; margin: 12px 0;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 2px;
+            background: linear-gradient(90deg, var(--warm), var(--accent));
+            transition: width 0.6s ease;
+        }
+
+        .nav-active { color: var(--accent) !important; }
+        .nav-active::after { width: 100% !important; }
+
+        .product-added .btn-primary {
+            background: #16a34a !important;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="search-overlay" id="searchOverlay" onclick="closeSearch(event)">
+    <div class="search-box mx-4">
+        <div class="flex items-center px-5 py-4 border-b border-gray-100 gap-3">
+            <i class="bi bi-search text-gray-400 text-lg shrink-0"></i>
+            <input id="searchGlobal" type="text" placeholder="Buscar produtos, categorias…" autocomplete="off"
+                class="flex-1 text-base outline-none" style="font-family:'DM Sans',sans-serif">
+            <button onclick="closeSearch()" class="text-gray-300 hover:text-gray-600 text-xl leading-none">×</button>
+        </div>
+        <div id="searchResults" class="py-2">
+            <p class="text-xs text-gray-400 px-5 py-3">Digite para buscar produtos…</p>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+<div class="cart-panel" id="cartPanel">
+    <div class="p-5 border-b border-gray-100">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <h2 class="playfair text-xl font-bold" style="color:var(--brown)">Carrinho</h2>
+                <span id="cartCount" class="text-xs px-2 py-0.5 rounded-full text-white hidden" style="background:var(--accent)">0</span>
+            </div>
+            <button onclick="toggleCart()" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all text-xl leading-none">&times;</button>
+        </div>
+        <div id="shippingBar" class="hidden mt-3">
+            <div class="text-xs text-gray-500 flex justify-between mb-1">
+                <span id="shippingMsg"></span>
+                <span class="font-semibold" style="color:var(--accent)">Frete grátis acima de R$300</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="shippingFill" style="width:0%"></div></div>
+        </div>
+    </div>
+    <div id="cartItems" class="p-5 flex-1" style="overflow-y:auto; max-height:calc(100vh - 260px)">
+        <div class="text-center py-12">
+            <div class="text-5xl mb-3 bi-cart-fill"></div>
+            <p class="text-gray-500 font-medium">Seu carrinho está vazio</p>
+            <p class="text-xs text-gray-400 mt-1">Adicione móveis incríveis ao carrinho</p>
+            <button onclick="toggleCart(); document.getElementById('produtos').scrollIntoView({behavior:'smooth'})" class="btn-primary mt-4 text-sm py-2 px-5">Ver Produtos</button>
+        </div>
+    </div>
+    <div id="cartFooter" class="p-5 border-t border-gray-100 hidden" style="background:#fafaf9">
+        <div class="flex justify-between items-center mb-1">
+            <span class="text-sm text-gray-500">Subtotal</span>
+            <span class="text-sm font-medium" id="cartSubtotal">R$ 0,00</span>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-sm text-gray-500">Frete</span>
+            <span class="text-sm font-medium" id="cartShipping" style="color:#16a34a">Calculando…</span>
+        </div>
+        <div class="flex justify-between items-center mb-5 pt-3 border-t border-gray-200">
+            <span class="font-bold text-gray-800">Total</span>
+            <span class="playfair text-xl font-bold" id="cartTotal" style="color:var(--accent)">R$ 0,00</span>
+        </div>
+        <button onclick="checkout()" class="btn-primary w-full text-center py-3">Finalizar Compra →</button>
+        <button onclick="clearCart()" class="w-full text-center text-xs text-gray-400 hover:text-red-400 transition-colors mt-3 py-1">Limpar carrinho</button>
+    </div>
+</div>
+
+<header class="fixed top-0 left-0 right-0 z-50 shadow-sm" style="border-bottom:1px solid rgba(201,168,124,0.2)">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="#home" class="flex items-center gap-3">
+            <img src="https://img.icons8.com/laces/64/cottage.png" alt="logo" class="w-10 h-10">
+            <span class="playfair font-bold text-xl hidden sm:block" style="color:var(--brown)">MóveisCasa</span>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#sobre" class="nav-link">Sobre</a>
+            <a href="#produtos" class="nav-link">Produtos</a>
+            <a href="#avaliacoes" class="nav-link">Avaliações</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+            <button onclick="openSearch()" class="p-2 hover:bg-amber-50 rounded-full transition-colors" title="Buscar">
+                <i class="bi bi-search text-lg" style="color:var(--brown)"></i>
+            </button>
+            <button onclick="toggleCart()" class="relative p-2 hover:bg-amber-50 rounded-full transition-colors">
+                <i class="bi bi-bag text-xl" style="color:var(--brown)"></i>
+                <span id="cartBadge" class="absolute -top-1 -right-1 w-5 h-5 text-xs text-white rounded-full flex items-center justify-center hidden" style="background:var(--accent)">0</span>
+            </button>
+            <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2 hover:bg-amber-50 rounded-full transition-colors">
+                <i class="bi bi-list text-2xl" style="color:var(--brown)"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <div class="flex flex-col p-6 gap-5">
+        <a href="#home" onclick="toggleMobileMenu()" class="nav-link text-lg">Home</a>
+        <a href="#sobre" onclick="toggleMobileMenu()" class="nav-link text-lg">Sobre</a>
+        <a href="#produtos" onclick="toggleMobileMenu()" class="nav-link text-lg">Produtos</a>
+        <a href="#avaliacoes" onclick="toggleMobileMenu()" class="nav-link text-lg">Avaliações</a>
+    </div>
+</div>
+
+<section id="home" class="bg-[url('./assets/img/planodefundo.jpg')] bg-cover flex items-center">
+    <div class="grain"></div>
+    <div class="w-full px-8 md:px-16 lg:px-24 py-32 relative z-10">
+        <div class="max-w-2xl">
+            <p class="section-tag fade-up mb-4 opacity-80 text-black " >— Bem-vindo à MóveisCasa</p>
+            <h1 class="fade-up-2 leading-tight mb-6 text-white" style="font-family:'DM Sans',sans-serif; font-size:clamp(3rem,8vw,6rem); font-weight:700; letter-spacing:-0.02em;">
+                Móveis que <br><span style="color:var(--brown)"">transformam</span><br>seu lar
+            </h1>
+            <p class="fade-up-3 text-lg leading-relaxed mb-10 max-w-lg text-black ">
+                Peças únicas com design atemporal, artesanato de qualidade e materiais nobres. Crie ambientes que contam a sua história.
+            </p>
+            <div class="fade-up-3 flex flex-wrap gap-4">
+                <a href="#produtos" class="btn-primary">Ver Coleção</a>
+                <a href="#sobre" class="btn-outline">Sobre Nós</a>
+            </div>
+        </div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+        <span class="text-white text-xs tracking-widest uppercase">Scroll</span>
+        <div class="w-px h-8 bg-white animate-pulse"></div>
+    </div>
+</section>
+
+
+
+<section id="sobre" class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="relative">
+                <div class="absolute -top-4 -left-4 w-full h-full rounded-sm" style="background:var(--warm); opacity:0.15; z-index:0">   </div>
+                <div class="relative z-10 rounded-sm overflow-hidden aspect-[4/3] bg-gray-200 mx-auto">
+                    <img src="assets/img/sobrenos/midia.jpg" 
+                         alt="Sala de estar elegante" class=" w-full h-full object-cover ">
+                </div>
+                <div class="absolute -bottom-6 -right-6 w-32 h-32 rounded-full flex items-center justify-center" >
+                    
+                </div>
+            </div>
+            <div>
+                <p class="section-tag mb-3">Sobre Nós</p>
+                <h2 class="playfair text-4xl md:text-5xl font-bold mb-6 leading-tight" style="color:var(--brown)">
+                    O que faz a nossa <em>loja especial</em>
+                </h2>
+                <p class="text-gray-600 leading-relaxed mb-5">
+                    Há mais de 12 anos transformamos casas em lares. Cada peça que oferecemos é cuidadosamente selecionada pensando em durabilidade, estética e conforto — porque acreditamos que bons móveis são um investimento de vida.
+                </p>
+                <p class="text-gray-600 leading-relaxed mb-8">
+                    Nossa equipe de designers trabalha em parceria com artesãos locais, garantindo peças exclusivas que unem tradição e modernidade com o melhor custo-benefício da região.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-white" style="background:var(--warm)"><i class="bi bi-truck text-sm"></i></span>
+                        <span class="text-sm font-medium text-gray-700">Entrega grátis</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-white" style="background:var(--warm)"><i class="bi bi-shield-check text-sm"></i></span>
+                        <span class="text-sm font-medium text-gray-700">Garantia de 2 anos</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-white" style="background:var(--warm)"><i class="bi bi-tools text-sm"></i></span>
+                        <span class="text-sm font-medium text-gray-700">Montagem inclusa</span>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <a href="#contato" class="btn-primary">Fale Conosco</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="produtos" class="py-24 px-6" style="background:#f7f2ea">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <p class="section-tag mb-3">Catálogo</p>
+            <h2 class="playfair text-4xl md:text-5xl font-bold" style="color:var(--brown)">Nossos <span style="color:var(--accent)">Móveis</span></h2>
+            <div class="divider-ornament mt-6 max-w-xs mx-auto">
+                <span class="text-xl" style="color:var(--warm)">◆</span>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3 mb-10" id="filterBtns">
+            <button onclick="filterProducts('all')" class="filter-btn active px-5 py-2 text-sm font-medium rounded-full border transition-all" data-filter="all">Todos</button>
+            <button onclick="filterProducts('poltrona')" class="filter-btn px-5 py-2 text-sm font-medium rounded-full border transition-all" data-filter="poltrona">Poltronas</button>
+            <button onclick="filterProducts('sofa')" class="filter-btn px-5 py-2 text-sm font-medium rounded-full border transition-all" data-filter="sofa">Sofás</button>
+            <button onclick="filterProducts('comoda')" class="filter-btn px-5 py-2 text-sm font-medium rounded-full border transition-all" data-filter="comoda">Cômodas</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7" id="productsGrid">
+
+            <div class="product-card" data-category="poltrona">
+                <div class="relative overflow-hidden" style="background:#e8ddd0">
+                    <img src="assets/img/produtos/poltrona-amarela.jfif" alt="Poltrona Amarela" class="w-full h-56 object-cover hover:scale-105 transition-transform duration-500">
+                    <span class="absolute top-3 left-3 text-xs px-2 py-1 text-white rounded" style="background:var(--accent)">Novo</span>
+                </div>
+                <div class="p-5">
+                    <h3 class="playfair font-bold text-lg mb-1" style="color:var(--brown)">Poltrona Amarela</h3>
+                    <p class="text-xs text-gray-400 mb-3">Tecido Premium · Espuma D33</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="playfair text-xl font-bold" style="color:var(--accent)">R$ 99,99</span>
+                            <span class="text-sm line-through text-gray-400 ml-2">R$ 125,00</span>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded" style="background:#fff3ec; color:var(--accent)">-20%</span>
+                    </div>
+                    <button onclick="addToCart('Poltrona Cinza', 99.99, this)" class="btn-primary w-full text-center text-sm py-3">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="sofa">
+                <div class="relative overflow-hidden" style="background:#e8ddd0">
+                    <img src="assets/img/produtos/Sofa-verdade.jfif" alt="Sofá Verde" class="w-full h-56 object-cover hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-5">
+                    <h3 class="playfair font-bold text-lg mb-1" style="color:var(--brown)">Sofá Verde</h3>
+                    <p class="text-xs text-gray-400 mb-3">Madeira Maciça · 3 Lugares</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="playfair text-xl font-bold" style="color:var(--accent)">R$ 169,99</span>
+                            <span class="text-sm line-through text-gray-400 ml-2">R$ 189,99</span>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded" style="background:#fff3ec; color:var(--accent)">-11%</span>
+                    </div>
+                    <button onclick="addToCart('Sofá de Madeira', 169.99, this)" class="btn-primary w-full text-center text-sm py-3">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="sofa">
+                <div class="relative overflow-hidden" style="background:#e8ddd0">
+                    <img src="assets/img/produtos/Sofa-Cinza.jfif" alt="Sofá Cinza Acolchoado" class="w-full h-56 object-cover hover:scale-105 transition-transform duration-500">
+                    <span class="absolute top-3 left-3 text-xs px-2 py-1 text-white rounded" style="background:var(--brown)">Popular</span>
+                </div>
+                <div class="p-5">
+                    <h3 class="playfair font-bold text-lg mb-1" style="color:var(--brown)">Sofá Cinza Acolchoado</h3>
+                    <p class="text-xs text-gray-400 mb-3">Veludo · Alta Densidade</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="playfair text-xl font-bold" style="color:var(--accent)">R$ 159,99</span>
+                            <span class="text-sm line-through text-gray-400 ml-2">R$ 189,99</span>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded" style="background:#fff3ec; color:var(--accent)">-16%</span>
+                    </div>
+                    <button onclick="addToCart('Sofá Cinza Acolchoado', 159.99, this)" class="btn-primary w-full text-center text-sm py-3">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="poltrona">
+                <div class="relative overflow-hidden" style="background:#e8ddd0">
+                    <img src="assets/img/produtos/poltrona-branca.jfif" alt="Poltrona Branca" class="w-full h-56 object-cover hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-5">
+                    <h3 class="playfair font-bold text-lg mb-1" style="color:var(--brown)">Poltrona Branca</h3>
+                    <p class="text-xs text-gray-400 mb-3">Madeira de Carvalho · Almofada</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="playfair text-xl font-bold" style="color:var(--accent)">R$ 119,99</span>
+                            <span class="text-sm line-through text-gray-400 ml-2">R$ 129,99</span>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded" style="background:#fff3ec; color:var(--accent)">-8%</span>
+                    </div>
+                    <button onclick="addToCart('Poltrona de Madeira', 119.99, this)" class="btn-primary w-full text-center text-sm py-3">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="poltrona">
+                <div class="relative overflow-hidden" style="background:#e8ddd0">
+                    <img src="assets/img/produtos/cadeira-de-madeira.jfif" alt="Cadeira de Madeira" class="w-full h-56 object-cover hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-5">
+                    <h3 class="playfair font-bold text-lg mb-1" style="color:var(--brown)">Cadeira de Madeira</h3>
+                    <p class="text-xs text-gray-400 mb-3">Madeira Maciça · Um lugar</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="playfair text-xl font-bold" style="color:var(--accent)">R$ 99,99</span>
+                            <span class="text-sm line-through text-gray-400 ml-2">R$ 125,00</span>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded" style="background:#fff3ec; color:var(--accent)">-20%</span>
+                    </div>
+                    <button onclick="addToCart('Poltrona Amarela', 99.99, this)" class="btn-primary w-full text-center text-sm py-3">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="comoda">
+                <div class="relative overflow-hidden" style="background:#e8ddd0">
+                    <img src="assets/img/produtos/Conjuto.jfif" alt="Conjuto de Cadeiras" class="w-full h-56 object-cover hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-5">
+                    <h3 class="playfair font-bold text-lg mb-1" style="color:var(--brown)">Conjuto de Cadeiras</h3>
+                    <p class="text-xs text-gray-400 mb-3">4 Cadeiras · Almofado</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="playfair text-xl font-bold" style="color:var(--accent)">R$ 139,99</span>
+                            <span class="text-sm line-through text-gray-400 ml-2">R$ 159,99</span>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded" style="background:#fff3ec; color:var(--accent)">-13%</span>
+                    </div>
+                    <button onclick="addToCart('Cômoda de Madeira', 139.99, this)" class="btn-primary w-full text-center text-sm py-3">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="avaliacoes" class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <p class="section-tag mb-3">Depoimentos</p>
+            <h2 class="playfair text-4xl md:text-5xl font-bold" style="color:var(--brown)">Nossos <span style="color:var(--accent)">Clientes</span></h2>
+            <div class="divider-ornament mt-6 max-w-xs mx-auto">
+                <span class="text-xl" style="color:var(--warm)">◆</span>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-7">
+            <div class="review-card">
+                <div class="flex mb-4 "style="color:var(--accent)">★★★★★</div>
+                <p class="text-gray-600 leading-relaxed text-sm mb-5">"Fiquei impressionado com a qualidade da poltrona que comprei. O acabamento é impecável e o atendimento foi excelente do início ao fim. Recomendo a todos!"</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--warm)">P</div>
+                    <div>
+                        <div class="font-semibold text-sm" style="color:var(--brown)">Pedro Robério</div>
+                        <div class="text-xs text-gray-400">Cliente verificado</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="flex mb-4" style="color:var(--accent)">★★★★★</div>
+                <p class="text-gray-600 leading-relaxed text-sm mb-5">"O sofá chegou antes do prazo e a montagem foi rápida. O design é lindo e combinou perfeitamente com minha sala. Sem dúvida voltarei a comprar aqui."</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--warm)">J</div>
+                    <div>
+                        <div class="font-semibold text-sm" style="color:var(--brown)">João Neves</div>
+                        <div class="text-xs text-gray-400">Cliente verificado</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="flex mb-4" style="color:var(--accent)">★★★★☆</div>
+                <p class="text-gray-600 leading-relaxed text-sm mb-5">"Ótima experiência de compra! A cômoda é linda e resistente. A equipe de entrega foi muito atenciosa. Produtos de altíssima qualidade pelo preço justo."</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--warm)">M</div>
+                    <div>
+                        <div class="font-semibold text-sm" style="color:var(--brown)">Miguel Alves</div>
+                        <div class="text-xs text-gray-400">Cliente verificado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contato" class="py-24 px-6" style="background:var(--brown)">
+    <div class="max-w-3xl mx-auto text-center">
+        <p class="section-tag mb-4" style="color:var(--warm)">Fale Conosco</p>
+        <h2 class="playfair text-4xl md:text-5xl font-bold text-white mb-6">Pronto para transformar<br>seu lar?</h2>
+        <p class="text-lg mb-10" style="color:rgba(245,240,232,0.7)">Entre em contato e descubra como podemos ajudar você a encontrar o móvel perfeito.</p>
+            <div class="grid md:grid-cols-3 gap-6 text-left">
+            <div class="p-5 rounded-sm" style="background:rgba(255,255,255,0.08)">
+                <i class="bi bi-geo-alt text-2xl mb-2 block" style="color:var(--warm)"></i>
+                <div class="text-sm font-semibold text-white mb-1">Endereço</div>
+                <div class="text-sm" style="color:rgba(245,240,232,0.6)">Rua das Flores, 123<br>Centro, Fortaleza-CE</div>
+            </div>
+            <div class="p-5 rounded-sm" style="background:rgba(255,255,255,0.08)">
+                <i class="bi bi-telephone text-2xl mb-2 block" style="color:var(--warm)"></i>
+                <div class="text-sm font-semibold text-white mb-1">Telefone</div>
+                <div class="text-sm" style="color:rgba(245,240,232,0.6)">(85) 99999-9999<br>Seg–Sáb, 9h–18h</div>
+            </div>
+            <div class="p-5 rounded-sm" style="background:rgba(255,255,255,0.08)">
+                <i class="bi bi-envelope text-2xl mb-2 block" style="color:var(--warm)"></i>
+                <div class="text-sm font-semibold text-white mb-1">E-mail</div>
+                <div class="text-sm" style="color:rgba(245,240,232,0.6)">contato@moveiscasa<br>.com.br</div>
+            </div>
+        </div>
+        <div class="mt-10">
+            <a href="mailto:contato@moveiscasa.com.br" class="btn-primary">Enviar Mensagem</a>
+        </div>
+    </div>
+</section>
+
+<footer class="py-8 px-6" style="background:var(--dark)">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <img src="https://img.icons8.com/laces/64/cottage.png" alt="logo" class="w-8 h-8 opacity-80">
+            <span class="playfair font-bold text-white opacity-80">MóveisCasa</span>
+        </div>
+        <p class="text-xs text-gray-500">© 2025 MóveisCasa. Todos os direitos reservados.</p>
+        <div class="flex gap-4">
+            <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-white/10" style="border:1px solid rgba(255,255,255,0.15)">
+                <i class="bi bi-instagram text-gray-400"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-white/10" style="border:1px solid rgba(255,255,255,0.15)">
+                <i class="bi bi-facebook text-gray-400"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-white/10" style="border:1px solid rgba(255,255,255,0.15)">
+                <i class="bi bi-whatsapp text-gray-400"></i>
+            </a>
+        </div>
+    </div>
+</footer>
+
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" 
+    class="fixed bottom-8 right-8 w-12 h-12 rounded-full text-white items-center justify-center shadow-lg transition-all hidden hover:scale-110 z-50"
+    style="background:var(--accent)">
+    <i class="bi bi-arrow-up text-lg"></i>
+</button>
+
+<script>
+    const PRODUCTS = [
+        { name: 'Poltrona Cinza', price: 99.99, category: 'poltrona', img: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=80&q=70' },
+        { name: 'Sofá de Madeira', price: 169.99, category: 'sofa', img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=80&q=70' },
+        { name: 'Sofá Cinza Acolchoado', price: 159.99, category: 'sofa', img: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=80&q=70' },
+        { name: 'Poltrona de Madeira', price: 119.99, category: 'poltrona', img: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=80&q=70' },
+        { name: 'Poltrona Amarela', price: 99.99, category: 'poltrona', img: 'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=80&q=70' },
+        { name: 'Cômoda de Madeira', price: 139.99, category: 'comoda', img: 'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=80&q=70' },
+    ];
+
+    let cart = [];
+    let toastTimer = null;
+
+    function toggleCart() {
+        document.getElementById('cartPanel').classList.toggle('open');
+        document.getElementById('cartOverlay').classList.toggle('open');
+    }
+
+    function addToCart(name, price, btnEl) {
+        const existing = cart.find(i => i.name === name);
+        if (existing) {
+            existing.qty += 1;
+        } else {
+            const product = PRODUCTS.find(p => p.name === name);
+            cart.push({ name, price, qty: 1, img: product?.img || '' });
+        }
+        updateCartUI();
+        animateBadge();
+        showToast(`✓ ${name} adicionado`);
+        if (btnEl) {
+            const card = btnEl.closest('.product-card');
+            if (card) {
+                card.classList.add('product-added');
+                btnEl.textContent = '✓ Adicionado!';
+                setTimeout(() => {
+                    card.classList.remove('product-added');
+                    btnEl.textContent = 'Adicionar ao Carrinho';
+                }, 1800);
+            }
+        }
+    }
+
+    function changeQty(index, delta) {
+        if (!cart[index]) return;
+        cart[index].qty += delta;
+        if (cart[index].qty <= 0) cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    function clearCart() {
+        if (!cart.length) return;
+        if (confirm('Deseja limpar o carrinho?')) {
+            cart = [];
+            updateCartUI();
+        }
+    }
+
+    function checkout() {
+        showToast('🎉 Pedido enviado! Entraremos em contato.', 3500);
+        cart = [];
+        updateCartUI();
+        toggleCart();
+    }
+
+    function updateCartUI() {
+        const badge = document.getElementById('cartBadge');
+        const countEl = document.getElementById('cartCount');
+        const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+        badge.textContent = totalQty;
+        badge.classList.toggle('hidden', totalQty === 0);
+        countEl.textContent = totalQty;
+        countEl.classList.toggle('hidden', totalQty === 0);
+
+        const itemsEl = document.getElementById('cartItems');
+        const footerEl = document.getElementById('cartFooter');
+        const shippingBar = document.getElementById('shippingBar');
+
+        if (cart.length === 0) {
+            itemsEl.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="text-5xl mb-3 bi-cart-fill"></div>
+                    <p class="text-gray-500 font-medium">Seu carrinho está vazio</p>
+                    <p class="text-xs text-gray-400 mt-1">Adicione móveis incríveis ao carrinho</p>
+                    <button onclick="toggleCart(); document.getElementById('produtos').scrollIntoView({behavior:'smooth'})" class="btn-primary mt-4 text-sm py-2 px-5">Ver Produtos</button>
+                </div>`;
+            footerEl.classList.add('hidden');
+            shippingBar.classList.add('hidden');
+            return;
+        }
+
+        let subtotal = 0;
+        itemsEl.innerHTML = cart.map((item, i) => {
+            subtotal += item.price * item.qty;
+            return `
+            <div class="cart-item-anim flex items-center gap-3 py-3 border-b border-gray-100">
+                <img src="${item.img}" class="cart-item-img" alt="${item.name}">
+                <div class="flex-1 min-w-0">
+                    <div class="font-medium text-sm truncate" style="color:var(--brown)">${item.name}</div>
+                    <div class="text-xs font-semibold mt-0.5" style="color:var(--accent)">R$ ${item.price.toFixed(2).replace('.',',')}</div>
+                    <div class="flex items-center gap-2 mt-2">
+                        <button class="qty-btn" onclick="changeQty(${i}, -1)">${item.qty === 1 ? '🗑' : '−'}</button>
+                        <span class="text-sm font-semibold w-6 text-center">${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+                    </div>
+                </div>
+                <div class="text-right shrink-0">
+                    <div class="font-bold text-sm" style="color:var(--dark)">R$ ${(item.price * item.qty).toFixed(2).replace('.',',')}</div>
+                    <button onclick="removeFromCart(${i})" class="text-xs text-gray-300 hover:text-red-400 transition-colors mt-1 block">remover</button>
+                </div>
+            </div>`;
+        }).join('');
+
+        const shipping = subtotal >= 300 ? 0 : 39.90;
+        const total = subtotal + shipping;
+        const pct = Math.min(100, (subtotal / 300) * 100);
+
+        document.getElementById('cartSubtotal').textContent = 'R$ ' + subtotal.toFixed(2).replace('.',',');
+        document.getElementById('cartShipping').textContent = shipping === 0 ? 'Grátis 🎉' : 'R$ ' + shipping.toFixed(2).replace('.',',');
+        document.getElementById('cartShipping').style.color = shipping === 0 ? '#16a34a' : '#6b7280';
+        document.getElementById('cartTotal').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
+
+        shippingBar.classList.remove('hidden');
+        document.getElementById('shippingFill').style.width = pct + '%';
+        const left = (300 - subtotal).toFixed(2).replace('.',',');
+        document.getElementById('shippingMsg').textContent = shipping === 0
+            ? '✓ Você ganhou frete grátis!'
+            : `Faltam R$ ${left} para frete grátis`;
+
+        footerEl.classList.remove('hidden');
+    }
+
+    function animateBadge() {
+        const badge = document.getElementById('cartBadge');
+        badge.classList.remove('badge-bounce');
+        void badge.offsetWidth;
+        badge.classList.add('badge-bounce');
+    }
+
+    function showToast(msg, duration = 2800) {
+        clearTimeout(toastTimer);
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    function toggleMobileMenu() {
+        document.getElementById('mobileMenu').classList.toggle('open');
+    }
+
+    function filterProducts(cat) {
+        document.querySelectorAll('#filterBtns .filter-btn').forEach(btn => {
+            const active = btn.dataset.filter === cat;
+            btn.style.background = active ? 'var(--accent)' : '';
+            btn.style.color = active ? 'white' : '';
+            btn.style.borderColor = active ? 'var(--accent)' : '#d1d5db';
+        });
+        let shown = 0;
+        document.querySelectorAll('#productsGrid .product-card').forEach((card, idx) => {
+            const show = cat === 'all' || card.dataset.category === cat;
+            card.style.display = show ? 'block' : 'none';
+            if (show) {
+                card.style.animation = 'none';
+                void card.offsetWidth;
+                card.style.animation = `fadeUp 0.35s ${idx * 0.06}s ease both`;
+                shown++;
+            }
+        });
+        let noResults = document.getElementById('noResults');
+        if (!noResults) {
+            noResults = document.createElement('p');
+            noResults.id = 'noResults';
+            noResults.className = 'text-center text-gray-400 col-span-3 py-8';
+            noResults.textContent = 'Nenhum produto encontrado.';
+            document.getElementById('productsGrid').after(noResults);
+        }
+        noResults.style.display = shown === 0 ? 'block' : 'none';
+    }
+
+    filterProducts('all');
+
+    function openSearch() {
+        document.getElementById('searchOverlay').classList.add('open');
+        setTimeout(() => document.getElementById('searchGlobal').focus(), 50);
+    }
+
+    function closeSearch(e) {
+        if (!e || e.target === document.getElementById('searchOverlay') || e.currentTarget === document.querySelector('#searchOverlay button')) {
+            document.getElementById('searchOverlay').classList.remove('open');
+            document.getElementById('searchGlobal').value = '';
+            document.getElementById('searchResults').innerHTML = '<p class="text-xs text-gray-400 px-5 py-3">Digite para buscar produtos…</p>';
+        }
+    }
+
+    document.getElementById('searchGlobal').addEventListener('input', function () {
+        const q = this.value.toLowerCase().trim();
+        const resultsEl = document.getElementById('searchResults');
+        if (!q) {
+            resultsEl.innerHTML = '<p class="text-xs text-gray-400 px-5 py-3">Digite para buscar produtos…</p>';
+            return;
+        }
+        const matches = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || p.category.includes(q));
+        if (!matches.length) {
+            resultsEl.innerHTML = '<p class="text-sm text-gray-400 px-5 py-4 text-center">Nenhum resultado encontrado.</p>';
+            return;
+        }
+        resultsEl.innerHTML = matches.map(p => `
+            <div class="search-result-item" onclick="addToCart('${p.name}', ${p.price}); closeSearch(); showToast('✓ ${p.name} adicionado')">
+                <img src="${p.img}" style="width:44px;height:44px;object-fit:cover;border-radius:4px;background:#f0e8dc">
+                <div class="flex-1">
+                    <div class="text-sm font-medium" style="color:var(--brown)">${p.name}</div>
+                    <div class="text-xs" style="color:var(--accent)">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+                </div>
+                <span class="text-xs px-3 py-1.5 rounded text-white" style="background:var(--accent)">+ Carrinho</span>
+            </div>`).join('');
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            closeSearch();
+            if (document.getElementById('cartPanel').classList.contains('open')) toggleCart();
+            if (document.getElementById('mobileMenu').classList.contains('open')) toggleMobileMenu();
+        }
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+    });
+
+    const sections = document.querySelectorAll('section[id], div[id="home"]');
+    const navLinks = document.querySelectorAll('nav .nav-link');
+    const sectionObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(l => l.classList.remove('nav-active'));
+                const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+                if (active) active.classList.add('nav-active');
+            }
+        });
+    }, { threshold: 0.45 });
+    sections.forEach(s => sectionObserver.observe(s));
+
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('backToTop');
+        const show = window.scrollY > 400;
+        btn.classList.toggle('hidden', !show);
+        btn.classList.toggle('flex', show);
+    });
+
+    const counters = document.querySelectorAll('[data-count]');
+    const counterObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = parseInt(entry.target.dataset.count);
+                const isPct = entry.target.nextElementSibling?.textContent.includes('%');
+                let current = 0;
+                const step = Math.ceil(target / 60);
+                const timer = setInterval(() => {
+                    current = Math.min(current + step, target);
+                    entry.target.textContent = current + (isPct ? '%' : '+');
+                    if (current >= target) clearInterval(timer);
+                }, 22);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    counters.forEach(c => counterObserver.observe(c));
+</script>
+</body>
+</html>
